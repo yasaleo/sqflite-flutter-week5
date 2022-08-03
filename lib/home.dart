@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:demo/addpage.dart';
 import 'package:demo/db/db.dart';
 import 'package:demo/db/dbmodel.dart';
+import 'package:demo/pop_up.dart';
 import 'package:demo/searchpage.dart';
 import 'package:demo/studentdetail.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,17 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  // ValueNotifier ssttu = ValueNotifier();
+
+@override
+  void initState() {
+    super.initState();
+    DatabaseHelper.instance.refresh();
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    DatabaseHelper.instance.refresh();
-    // ValueNotifier();
+    // DatabaseHelper.instance.refresh();
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 200, 200, 200),
@@ -67,37 +73,63 @@ class _HomepageState extends State<Homepage> {
                     itemBuilder: ((context, indexx) {
                       final value = newlist[indexx];
                       return Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
                         shadowColor: Colors.black38,
                         elevation: 5,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
-                        color: const Color.fromARGB(255, 200, 200, 200),
+                        color: const Color.fromARGB(255, 209, 209, 209),
                         child: GestureDetector(
                           onLongPress: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      StudentDetail(valueee: indexx),
+                                      StudentDetail(
+                                        valueee: indexx,
+                                        
+                                        
+                                        ),
                                 ));
                           },
-                          child: ListTile(
-                            leading:ClipOval(child: value.image!=''?  Image.memory(base64Decode(value.image)): SvgPicture.asset(
-                                  'assets/abstract-user-flat-1.svg',
-                                  width: 53,
-                                  height: 53,
-                                  fit: BoxFit.cover,
-                                ),) ,
-                                title: Text(value.name),
-                            trailing: IconButton(
-                                onPressed: () {
-                                  DatabaseHelper.instance.remove(value.id!);
-                                  DatabaseHelper.instance.refresh();
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              leading: ClipOval(
+                                child: value.image != ''
+                                    ? Image.memory(
+                                        base64Decode(value.image),
+                                        width: 53,
+                                        height: 53,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/abstract-user-flat-1.svg',
+                                        width: 53,
+                                        height: 53,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                              title: Text(value.name),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    // DatabaseHelper.instance.remove(value.id!);
+                                    // DatabaseHelper.instance.refresh();
 
-                                  alerted(context);
-                                },
-                                icon: const Icon(Icons.delete_outline_outlined),
-                                color: const Color.fromARGB(255, 113, 48, 44)),
+
+                                    showDialog(
+                                      context: context, 
+                                      builder: (context) {
+                                          return  AlertBox(idd: value.id!,);
+                                        
+                                      }, );
+                                  },
+                                  icon:
+                                      const Icon(Icons.delete_outline_outlined),
+                                  color:
+                                      const Color.fromARGB(255, 113, 48, 44)),
+                            ),
                           ),
                         ),
                       );
@@ -113,15 +145,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  alerted(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Deleted'),
-        backgroundColor: const Color.fromARGB(255, 108, 17, 10),
-        duration: const Duration(milliseconds: 800),
-        dismissDirection: DismissDirection.horizontal,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
-      ),
-    );
-  }
+  
 }
+
+

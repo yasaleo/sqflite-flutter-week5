@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:demo/db/db.dart';
@@ -10,22 +9,69 @@ import 'package:lottie/lottie.dart';
 
 class AddPage extends StatefulWidget {
   int? idd;
-  AddPage({Key? key, this.idd}) : super(key: key);
+  String? nameeditingcontroller;
+  String? addresseditingcontroller;
+  String? imagee;
+  int? ageeditingcontroller;
+  int? mobileeditingcontroller;
+
+  AddPage(
+      {Key? key,
+      this.idd,
+      this.nameeditingcontroller,
+      this.addresseditingcontroller,
+      this.ageeditingcontroller,
+      this.mobileeditingcontroller,
+      this.imagee})
+      : super(key: key);
 
   @override
-  State<AddPage> createState() => _AddPageState(sid: idd);
+  State<AddPage> createState() => _AddPageState(
+        sid: idd,
+        namee: nameeditingcontroller,
+        addresss: addresseditingcontroller,
+        agee: ageeditingcontroller,
+        mobilee: mobileeditingcontroller,
+        img: imagee,
+      );
 }
 
 class _AddPageState extends State<AddPage> {
   int? sid;
-  _AddPageState({this.sid});
+  String? namee;
+  String? addresss;
+  int? agee;
+  int? mobilee;
+
+  _AddPageState(
+      {this.sid, this.namee, this.addresss, this.agee, this.mobilee, this.img});
   TextEditingController nameeditingcontroller = TextEditingController();
   TextEditingController ageeditingcontroller = TextEditingController();
   TextEditingController mobileeditingcontroller = TextEditingController();
   TextEditingController addresseditingcontroller = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    nameeditingcontroller.text = namee ??= '';
+    addresseditingcontroller.text = addresss ??= '';
+    if (agee == null) {
+      ageeditingcontroller.text = '';
+    } else {
+      ageeditingcontroller.text = agee.toString();
+    }
+
+    if (mobilee == null) {
+      mobileeditingcontroller.text = '';
+    } else {
+      mobileeditingcontroller.text = mobilee.toString();
+    }
+    img??='';
+    
+  }
+
   File? image;
-  String img = '';
+  String? img ;
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   @override
@@ -38,14 +84,12 @@ class _AddPageState extends State<AddPage> {
         actions: [
           TextButton.icon(
               onPressed: () async {
-                if(_key.currentState!.validate()){
-                    sid!=null?await update(sid!):await submit();
+                if (_key.currentState!.validate()) {
+                  sid != null ? await update(sid!) : await submit();
 
-                Navigator.pop(context);
-                DatabaseHelper.instance.refresh();
+                  DatabaseHelper.instance.refresh();
+                  Navigator.pop(context);
                 }
-                
-                
               },
               icon: const Icon(
                 Icons.done_rounded,
@@ -63,7 +107,7 @@ class _AddPageState extends State<AddPage> {
           child: Column(
             children: [
               GestureDetector(
-                child: image != null
+                child: img != ''
                     ? Padding(
                         padding: const EdgeInsets.only(left: 10, top: 35),
                         child: Material(
@@ -71,8 +115,8 @@ class _AddPageState extends State<AddPage> {
                           elevation: 25,
                           color: Colors.transparent,
                           child: ClipOval(
-                            child: Image.file(
-                              image!,
+                            child: Image.memory(
+                              base64Decode(img!),
                               width: 160,
                               height: 160,
                               fit: BoxFit.cover,
@@ -115,6 +159,7 @@ class _AddPageState extends State<AddPage> {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: TextFormField(
+                  // initialValue: 'yadhu',
                   controller: ageeditingcontroller,
                   validator: (value) {
                     if (value!.isEmpty || value.length > 2) {
@@ -188,7 +233,7 @@ class _AddPageState extends State<AddPage> {
       Student(
           id: id,
           name: nameeditingcontroller.text,
-          image: img,
+          image: img!,
           age: _age,
           mobile: _mobile,
           address: addresseditingcontroller.text),
@@ -207,7 +252,7 @@ class _AddPageState extends State<AddPage> {
     int _mobile = int.parse(mobileeditingcontroller.text);
     await DatabaseHelper.instance.add(Student(
         name: nameeditingcontroller.text,
-        image: img,
+        image: img!,
         age: _age,
         mobile: _mobile,
         address: addresseditingcontroller.text));

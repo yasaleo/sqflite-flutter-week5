@@ -18,10 +18,11 @@ class StudentDetail extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 200, 200, 200),
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back_ios_outlined)),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios_outlined),
+        ),
         elevation: 0,
         title: const Text(
           'Detail',
@@ -37,7 +38,15 @@ class StudentDetail extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddPage(idd: ids.id),
+                      builder: (context) => AddPage(
+                        idd: ids.id,
+                        nameeditingcontroller: ids.name,
+                        addresseditingcontroller: ids.address,
+                        ageeditingcontroller: ids.age,
+                        mobileeditingcontroller: ids.mobile,
+                        imagee: ids.image,
+                        
+                        ),
                     ));
               },
               icon: const Icon(Icons.mode_edit_outlined))
@@ -71,8 +80,7 @@ class StudentDetail extends StatelessWidget {
                                   width: 160,
                                   height: 160,
                                   fit: BoxFit.cover,
-                                )
-                                ),
+                                )),
                     ),
                   ),
                   const SizedBox(
@@ -84,33 +92,39 @@ class StudentDetail extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold)),
                   ),
-            
                   const SizedBox(
                     height: 20,
                   ),
-            
                   cardwidget(
                     newdetail.age,
                     const Text(
                       'Age:',
-                      style: TextStyle(fontSize: 27),
+                      style: TextStyle(
+                          fontSize: 27,
+                          color: Color.fromARGB(255, 104, 104, 104),
+                          fontWeight: FontWeight.w300),
                     ),
                   ),
                   cardwidget(
                     newdetail.mobile,
                     const Text(
                       'Mobile:',
-                      style: TextStyle(fontSize: 27),
+                      style: TextStyle(
+                          fontSize: 27,
+                          color: Color.fromARGB(255, 104, 104, 104),
+                          fontWeight: FontWeight.w300),
                     ),
-                  ),cardwidget(
+                  ),
+                  cardwidget(
                     newdetail.address,
                     const Text(
                       'Address:',
-                      style: TextStyle(fontSize: 27),
+                      style: TextStyle(
+                          fontSize: 27,
+                          color: Color.fromARGB(255, 104, 104, 104),
+                          fontWeight: FontWeight.w300),
                     ),
                   ),
-            
-                   
                 ],
               ),
             );
@@ -129,7 +143,6 @@ class StudentDetail extends StatelessWidget {
       child: ListTile(
         leading: icon,
         title: Text(' $text', style: const TextStyle(fontSize: 30)),
-        
       ),
     );
   }
