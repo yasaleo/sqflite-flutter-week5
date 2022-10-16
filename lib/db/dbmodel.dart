@@ -22,7 +22,7 @@ class Student {
         mobile: json['mobile'],
         address: json['address'],
       );
-      
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -34,3 +34,21 @@ class Student {
     };
   }
 }
+
+// class StudentFeilds {
+//   static const List<String> values = [
+//     id,
+//     name,
+//     image,
+//     age,
+//     mobile,
+//     address,
+//   ];
+
+//   static const String id = 'id';
+//   static const String name = 'name';
+//   static const String image = 'image';
+//   static const String age = 'age';
+//   static const String mobile = 'mobile';
+//   static const String address = 'address';
+// }

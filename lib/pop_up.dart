@@ -1,9 +1,12 @@
-import 'package:demo/db/db.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/student_bloc.dart';
 
 class AlertBox extends StatefulWidget {
-  int idd;
-  AlertBox({required this.idd});
+ final int idd;
+  const AlertBox({required this.idd});
 
   @override
   State<AlertBox> createState() => _AlertBoxState(idd: idd);
@@ -15,7 +18,7 @@ class _AlertBoxState extends State<AlertBox>
   _AlertBoxState({required this.idd});
   late AnimationController anicontroller;
 
-// TODO: bloc cheyy
+
 
   @override
   void initState() {
@@ -81,30 +84,39 @@ class _AlertBoxState extends State<AlertBox>
                         ),
                         Row(
                           children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary:
-                                      const Color.fromARGB(255, 157, 13, 0),
-                                  elevation: 16),
-                              onPressed: () {
-                                DatabaseHelper.instance.remove(idd);
-                                DatabaseHelper.instance.refresh();
-                                alerted(context);
-                                Navigator.pop(context);
+                            BlocBuilder<StudentBloc, StudentState>(
+                              builder: (context, state) {
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          const Color.fromARGB(255, 157, 13, 0),
+                                      elevation: 16),
+                                  onPressed: () {
+                                    context
+                                        .read<StudentBloc>()
+                                        .add(DeleteStudent(id: idd));
+                                    context
+                                        .read<StudentBloc>()
+                                        .add(const FetchStudents());
+                                    
+                                    alerted(context);
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Yes',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 255, 175, 168),
+                                    ),
+                                  ),
+                                );
                               },
-                              child: const Text(
-                                'Yes',
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 175, 168),
-                                ),
-                              ),
                             ),
                             const SizedBox(
                               width: 152,
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary:
+                                  backgroundColor:
                                       const Color.fromARGB(255, 157, 13, 0),
                                   elevation: 16),
                               onPressed: () {

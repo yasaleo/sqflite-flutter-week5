@@ -1,21 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:demo/db/db.dart';
+
 import 'package:demo/db/dbmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
-class AddPage extends StatefulWidget {
-  int? idd;
-  String? nameeditingcontroller;
-  String? addresseditingcontroller;
-  String? imagee;
-  int? ageeditingcontroller;
-  int? mobileeditingcontroller;
+import 'bloc/student_bloc.dart';
 
-  AddPage(
+class AddPage extends StatefulWidget {
+  final int? idd;
+  final String? nameeditingcontroller;
+  final String? addresseditingcontroller;
+  final String? imagee;
+  final int? ageeditingcontroller;
+  final int? mobileeditingcontroller;
+
+  const AddPage(
       {Key? key,
       this.idd,
       this.nameeditingcontroller,
@@ -66,12 +69,11 @@ class _AddPageState extends State<AddPage> {
     } else {
       mobileeditingcontroller.text = mobilee.toString();
     }
-    img??='';
-    
+    img ??= '';
   }
 
   File? image;
-  String? img ;
+  String? img;
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   @override
@@ -82,23 +84,28 @@ class _AddPageState extends State<AddPage> {
         backgroundColor: const Color.fromARGB(255, 200, 200, 200),
         elevation: 0,
         actions: [
-          TextButton.icon(
-              onPressed: () async {
-                if (_key.currentState!.validate()) {
-                  sid != null ? await update(sid!) : await submit();
+          BlocBuilder<StudentBloc, StudentState>(
+            builder: (context, state) {
+              return TextButton.icon(
+                  onPressed: () async {
+                    if (_key.currentState!.validate()) {
+                      sid != null
+                          ? await update(sid!, context)
+                          : await submit(context);
 
-                  DatabaseHelper.instance.refresh();
-                  Navigator.pop(context);
-                }
-              },
-              icon: const Icon(
-                Icons.done_rounded,
-                color: Colors.black38,
-              ),
-              label: const Text(
-                'Done',
-                style: TextStyle(color: Colors.black87),
-              ))
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.done_rounded,
+                    color: Colors.black38,
+                  ),
+                  label: const Text(
+                    'Done',
+                    style: TextStyle(color: Colors.black87),
+                  ));
+            },
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -159,7 +166,6 @@ class _AddPageState extends State<AddPage> {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: TextFormField(
-                  // initialValue: 'yadhu',
                   controller: ageeditingcontroller,
                   validator: (value) {
                     if (value!.isEmpty || value.length > 2) {
@@ -225,43 +231,51 @@ class _AddPageState extends State<AddPage> {
     });
   }
 
-  update(int id) async {
-    int _age = int.parse(ageeditingcontroller.text);
-    int _mobile = int.parse(mobileeditingcontroller.text);
+  update(int id, BuildContext ctx) async {
+    int age = int.parse(ageeditingcontroller.text);
+    int mobile = int.parse(mobileeditingcontroller.text);
 
-    await DatabaseHelper.instance.update(
-      Student(
-          id: id,
-          name: nameeditingcontroller.text,
-          image: img!,
-          age: _age,
-          mobile: _mobile,
-          address: addresseditingcontroller.text),
-    );
-    setState(() {
+    ctx.read<StudentBloc>().add(
+          UpdateStudent(
+            student: Student(
+              id: id,
+                name: nameeditingcontroller.text,
+                image: img!,
+                age: age,
+                mobile: mobile,
+                address: addresseditingcontroller.text),
+          ),
+        );
+    ctx.read<StudentBloc>().add(const FetchStudents());
+
+  
+    
       nameeditingcontroller.clear();
       ageeditingcontroller.clear();
       mobileeditingcontroller.clear();
       addresseditingcontroller.clear();
       sid = null;
-    });
+    
   }
 
-  submit() async {
-    int _age = int.parse(ageeditingcontroller.text);
-    int _mobile = int.parse(mobileeditingcontroller.text);
-    await DatabaseHelper.instance.add(Student(
-        name: nameeditingcontroller.text,
-        image: img!,
-        age: _age,
-        mobile: _mobile,
-        address: addresseditingcontroller.text));
+  submit(BuildContext ctx) async {
+    int age = int.parse(ageeditingcontroller.text);
+    int mobile = int.parse(mobileeditingcontroller.text);
 
-    setState(() {
+    ctx.read<StudentBloc>().add(AddStudent(
+          name: nameeditingcontroller.text,
+          image: img!,
+          age: age,
+          mobile: mobile,
+          address: addresseditingcontroller.text,
+        ));
+    ctx.read<StudentBloc>().add(const FetchStudents());
+
+    
       nameeditingcontroller.clear();
       ageeditingcontroller.clear();
       mobileeditingcontroller.clear();
       addresseditingcontroller.clear();
-    });
+    
   }
 }

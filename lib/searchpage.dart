@@ -1,8 +1,9 @@
-import 'package:demo/db/db.dart';
-import 'package:demo/db/dbmodel.dart';
-import 'package:demo/home.dart';
+
 import 'package:demo/studentdetail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/student_bloc.dart';
 
 class SearchPage extends SearchDelegate {
   @override
@@ -18,22 +19,24 @@ class SearchPage extends SearchDelegate {
 
   @override
   Widget? buildLeading(BuildContext context) {
-    return IconButton(onPressed: () {
-      close(context, query);
-    }, icon: const Icon(Icons.arrow_back));
+    return IconButton(
+        onPressed: () {
+          close(context, query);
+        },
+        icon: const Icon(Icons.arrow_back));
   }
 
   @override
   Widget buildResults(BuildContext context) {
-   return ValueListenableBuilder(
-    valueListenable: DatabaseHelper.instance.helperrr,
-     builder: (BuildContext context,List<Student>newlist,Widget?_){
-      return 
-         ListView.separated(
-          itemBuilder:((context, index) {
-            final value = newlist[index];
-            if (value.name.toLowerCase().contains(query.toLowerCase())) {
-              return Card(
+    return BlocBuilder<StudentBloc, StudentState>(
+      builder: (context, state) {
+        if (state is DisplayStudents) {
+          final students = state.students;
+          return ListView.separated(
+              itemBuilder: ((context, index) {
+                final value = students[index];
+                if (value.name.toLowerCase().contains(query.toLowerCase())) {
+                  return Card(
                     shadowColor: Colors.black38,
                     elevation: 5,
                     shape: RoundedRectangleBorder(
@@ -52,40 +55,49 @@ class SearchPage extends SearchDelegate {
                         leading: Text(value.name),
                         trailing: IconButton(
                             onPressed: () {
-                              DatabaseHelper.instance.remove(value.id!);
-                              DatabaseHelper.instance.refresh();
+                              context
+                                  .read<StudentBloc>()
+                                  .add(DeleteStudent(id: students[index].id!));
+                              context
+                                  .read<StudentBloc>()
+                                  .add(const FetchStudents());
+                              // DatabaseHelper.instance.remove(value.id!);
+                              // DatabaseHelper.instance.refresh();
                               alerted(context);
-                              
                             },
                             icon: const Icon(Icons.delete_outline_outlined),
                             color: const Color.fromARGB(255, 113, 48, 44)),
                       ),
                     ),
                   );
-              
-            }else{
-              return const SizedBox(height: 1,);
-            }
-          }) ,
-           separatorBuilder:(context,index){
-            return const SizedBox();
-           } ,
-            itemCount:newlist.length );
-      
-     }
-     );
+                } else {
+                  return const SizedBox(
+                    height: 1,
+                  );
+                }
+              }),
+              separatorBuilder: (context, index) {
+                return const SizedBox();
+              },
+              itemCount: students.length);
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return ValueListenableBuilder(
-    valueListenable: DatabaseHelper.instance.helperrr,
-     builder: (BuildContext context,List<Student>newlist,Widget?_){
-      return ListView.separated(
-        itemBuilder:((context, index) {
-          final value = newlist[index];
-          if (value.name.toLowerCase().contains(query.toLowerCase())) {
-            return Card(
+    return BlocBuilder<StudentBloc, StudentState>(
+      builder: (context, state) {
+        if (state is DisplayStudents) {
+          final students = state.students;
+          return ListView.separated(
+              itemBuilder: ((context, index) {
+                final value = students[index];
+                if (value.name.toLowerCase().contains(query.toLowerCase())) {
+                  return Card(
                     shadowColor: Colors.black38,
                     elevation: 5,
                     shape: RoundedRectangleBorder(
@@ -104,27 +116,38 @@ class SearchPage extends SearchDelegate {
                         leading: Text(value.name),
                         trailing: IconButton(
                             onPressed: () {
-                              DatabaseHelper.instance.remove(value.id!);
-                              DatabaseHelper.instance.refresh();
+
+                              context
+                                  .read<StudentBloc>()
+                                  .add(DeleteStudent(id: students[index].id!));
+                              context
+                                  .read<StudentBloc>()
+                                  .add(const FetchStudents());
+
+                              // DatabaseHelper.instance.remove(value.id!);
+                              // DatabaseHelper.instance.refresh();
                               alerted(context);
-                              
                             },
                             icon: const Icon(Icons.delete_outline_outlined),
                             color: const Color.fromARGB(255, 113, 48, 44)),
                       ),
                     ),
                   );
-            
-          }else{
-            return const SizedBox(height: 1,);
-          }
-        }) ,
-         separatorBuilder:(context,index){
+                } else {
+                  return const SizedBox(
+                    height: 1,
+                  );
+                }
+              }),
+              separatorBuilder: (context, index) {
+                return const SizedBox();
+              },
+              itemCount: students.length);
+        } else {
           return const SizedBox();
-         } ,
-          itemCount:newlist.length );
-     }
-     );
+        }
+      },
+    );
   }
 
   @override
@@ -145,6 +168,4 @@ class SearchPage extends SearchDelegate {
       ),
     );
   }
-
-
 }

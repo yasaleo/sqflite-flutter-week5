@@ -33,6 +33,6 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
       add(const FetchStudents());
     });
 
-    
+   
   }
 }

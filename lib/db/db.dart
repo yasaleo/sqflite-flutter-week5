@@ -1,5 +1,4 @@
 import 'package:demo/db/dbmodel.dart';
-import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:io';
 import 'package:path/path.dart';
@@ -35,14 +34,7 @@ class DatabaseHelper {
 ''');
   }
 
-  ValueNotifier<List<Student>> helperrr = ValueNotifier([]);
 
-  Future refresh() async {
-    final studentlist = await getStudent();
-    helperrr.value.clear();
-    helperrr.value.addAll(studentlist);
-    helperrr.notifyListeners();
-  }
 
   Future<List<Student>> getStudent() async {
     Database db = await instance.databse;
@@ -53,6 +45,8 @@ class DatabaseHelper {
         : [];
     return studenList;
   }
+
+
 
   Future<int> add(Student student) async {
     Database db = await instance.databse;

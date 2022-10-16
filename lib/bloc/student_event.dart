@@ -14,7 +14,7 @@ class AddStudent extends StudentEvent {
   final String address;
 
   const AddStudent({
-    required this.id,
+    this.id,
     required this.name,
     required this.image,
     required this.age,
@@ -47,6 +47,8 @@ class FetchStudents extends StudentEvent {
   @override
   List<Object?> get props => [];
 }
+
+
 
 class DeleteStudent extends StudentEvent {
   final int id;
