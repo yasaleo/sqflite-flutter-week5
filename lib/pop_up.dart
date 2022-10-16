@@ -15,6 +15,8 @@ class _AlertBoxState extends State<AlertBox>
   _AlertBoxState({required this.idd});
   late AnimationController anicontroller;
 
+// TODO: bloc cheyy
+
   @override
   void initState() {
     super.initState();
