@@ -1,6 +1,6 @@
 import 'package:demo/db/db.dart';
 import 'package:demo/db/dbmodel.dart';
-import 'package:demo/home.dart';
+
 import 'package:demo/studentdetail.dart';
 import 'package:flutter/material.dart';
 
